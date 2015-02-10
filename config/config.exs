@@ -23,4 +23,4 @@ use Mix.Config
 #
 #     import_config "#{Mix.env}.exs"
 config :docker_api, :hosts,
-  ["127.0.0.1:14443", "192.168.4.4:14443"]
+  ["docker0001.wameku.com:14443", "192.168.4.4:14443"]

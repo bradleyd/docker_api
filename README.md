@@ -1,7 +1,7 @@
 DockerApi
 =========
 
-A simple Docker Api client
+A simple Docker Api client for Elixir
 
 #### Config
 Hosts are a list 
