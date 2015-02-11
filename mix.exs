@@ -12,7 +12,7 @@ defmodule DockerApi.Mixfile do
   #
   # Type `mix help compile.app` for more information
   def application do
-    [applications: [:logger, :httpotion]]
+    [applications: [:logger, :httpoison]]
   end
 
   # Dependencies can be Hex packages:
@@ -27,7 +27,7 @@ defmodule DockerApi.Mixfile do
   defp deps do
     [
       {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.1"},
-      {:httpotion, "~> 2.0.0"},
+      {:httpoison, "~> 0.6"},
       {:poison, "~> 1.3"}
     ]
   end
