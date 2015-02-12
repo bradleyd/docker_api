@@ -28,10 +28,9 @@ defmodule DockerApiContainerTest do
     IO.inspect code
   end
 
-  test "/containers/id/attach" do
-    { body, code } = DockerApi.Container.attach("docker0001.wameku.com:14443", "d869ff642538359d")
-    IO.inspect body
+  test "/containers/id/stop" do
+    { body, code } = DockerApi.Container.start("192.168.4.4:14443", "d869ff642538359d")
+    IO.inspect code
   end
- 
-  
+
 end

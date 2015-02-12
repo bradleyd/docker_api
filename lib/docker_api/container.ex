@@ -67,8 +67,9 @@ defmodule DockerApi.Container do
     end
   end
   
+  # WIP dont use
   def attach(host, id) do
-    response = HTTPoison.post host <> "/containers/#{id}/attach?logs=1&stream=0&stdout=1"
+    response = HTTPoison.post host <> "/containers/#{id}/attach?logs=1&stream=1&stdout=1&stdin=1"
     response
   end
 
