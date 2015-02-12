@@ -47,23 +47,23 @@ defmodule DockerApi.Container do
   end
 
   def logs(host, id) do
-    {:ok, response } = HTTPoison.get host <> "/containers/#{id}/logs?stderr=1&stdout=1&timestamps=1&follow=1&tail=10", %{}, stream_to: self
-    loop(response)
+    {:ok, %HTTPoison.AsyncResponse{id: id}} = HTTPoison.get host <> "/containers/#{id}/logs?stderr=1&stdout=1&timestamps=1", %{}, stream_to: self
+    stream_loop(id)
   end
 
 
-  defp loop(id) do
+  defp stream_loop(id) do
     receive do
-      %HTTPoison.AsyncResponse{id: id} -> "foo"
-      %HTTPoison.AsyncStatus{code: 200, id: id} -> loop(id) #IO.puts "good status"
-      %HTTPoison.AsyncHeaders{headers: _, id: id} -> loop(id) #"Headers"
-      %HTTPoison.AsyncChunk{chunk: chk, id: id} -> 
-        IO.inspect to_string(chk)
-        loop(%HTTPoison.AsyncChunk{chunk: chk, id: id})
-      %HTTPoison.AsyncEnd{id: id} -> "Finsished"
-      _ -> "got here"
+      %HTTPoison.AsyncStatus{ id: id, code: 200 } -> stream_loop(id)
+      %HTTPoison.AsyncHeaders{headers: _, id: id} -> stream_loop(id)
+      %HTTPoison.AsyncChunk{id: id, chunk: chk} -> 
+        if String.valid?(chk) do
+          IO.puts(IO.iodata_to_binary(chk))
+        end
+        stream_loop(id)
+      %HTTPoison.AsyncEnd{id: id} -> IO.puts "End of stream"
     after
-      5_000 -> "nothing after 1s"
+      5_000 -> "Timeout waiting for stream"
     end
   end
   
