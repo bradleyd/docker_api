@@ -30,7 +30,7 @@ defmodule DockerApi.Image do
 
   end
 
-  defp parse_post_response(url) do
+  defp parse_response(:post, url) do
     case HTTPoison.post(url) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         { decode_json(body), 200 }
