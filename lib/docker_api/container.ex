@@ -5,8 +5,15 @@ defmodule DockerApi.Container do
   end
 
   def get(host, id) do
-    response = HTTPoison.get host <> "/containers/#{id}/json"
-    response |>
+    case HTTPoison.get host <> "/containers/#{id}/json" do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        {:ok, %{body: body, status_code: 200}}
+      {:ok, %HTTPoison.Response{status_code: 404}} ->
+        %{body: "Not found", status_code: 404} 
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        %{body: reason, status_code: 500}
+    end 
+    |> 
     parse_response 
   end
   
@@ -22,14 +29,14 @@ defmodule DockerApi.Container do
     parse_response 
   end
   
-  def start(host, id) do
-    response = HTTPoison.post host <> "/containers/#{id}/start"
+  def start(host, id, opts \\ %{}) do
+    {:ok, response} = HTTPoison.post host <> "/containers/#{id}/start", opts
     response |>
     parse_response
   end
 
   def stop(host, id) do
-    response = HTTPoison.post host <> "/containers/#{id}/stop"
+    {:ok, response } = HTTPoison.post host <> "/containers/#{id}/stop"
     response |>
     parse_response
   end
@@ -74,8 +81,8 @@ defmodule DockerApi.Container do
   end
 
   def parse_response(response) do
-    { Poison.decode(response.body), response.status_code }
+    {result, response } = response 
+    { result, Poison.decode!(response.body), response.status_code }
   end
   
 end
-
