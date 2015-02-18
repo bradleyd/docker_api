@@ -4,8 +4,9 @@ defmodule DockerApiContainerTest do
   @host "192.168.4.4:14443"
 
   test "/containers" do
-    {body, code } = DockerApi.Container.all("192.168.4.4:14443")
-    assert is_map(body) 
+    body = DockerApi.Container.all("192.168.4.4:14445")
+    IO.inspect body
+    #assert is_list(body) 
   end
 
   test "/containers/id" do

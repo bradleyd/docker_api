@@ -1,7 +1,8 @@
 defmodule DockerApi.Container do
 
   def all(host) when is_binary(host) do
-    HTTPoison.get host <> "/containers/json"
+    response = HTTPoison.get host <> "/containers/json" 
+    handle_response(response)
   end
 
   def get(host, id) do
@@ -17,6 +18,7 @@ defmodule DockerApi.Container do
     parse_response 
   end
   
+ 
   def top(host, id) do
     response = HTTPoison.get host <> "/containers/#{id}/top/json"
     response |>
@@ -80,9 +82,26 @@ defmodule DockerApi.Container do
     response
   end
 
+  def handle_response(resp = {:ok, %{status_code: 200, body: body}}) do
+    parse_response(resp)
+  end
+  
+  def handle_response(resp = {:ok, %{status_code: 404 , body: body}}) do 
+    parse_response(resp)
+  end
+
+  def handle_response(resp = {:error, %HTTPoison.Error{id: _, reason: reason}}) do
+    parse_response(resp)
+  end
+
+  def parse_response({:error, resp = %HTTPoison.Error{id: _, reason: reason}}) do
+    { :error, reason, 500 }
+  end
+
   def parse_response(response) do
     {result, response } = response 
     { result, Poison.decode!(response.body), response.status_code }
   end
+
   
 end
