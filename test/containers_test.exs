@@ -14,6 +14,26 @@ defmodule DockerApiContainerTest do
     assert is_list(body) 
   end
 
+  test "/containers/create" do
+    payload  = %{ "Image": "redis",
+                  "AttachStdout": true,
+                  "AttachStderr": true,
+                  "Hostname": "test_redis",
+                  "HostConfig": %{ "Dns": ["8.8.8.8"] },
+                  "ExposedPorts": %{ "22/tcp": %{}, "6379/tcp": %{} },
+                  "PortBindings": %{ "22/tcp": [%{ "HostIp": "192.168.4.4" }], 
+                                     "6379/tcp": [%{ "HostIp": "192.168.4.4" }]}}
+
+    {:ok, body, code } = DockerApi.Container.create(@host, payload)
+    assert code == 204
+  end
+
+  test "/containers/id delete" do
+    {:ok, body, code }  = DockerApi.Container.delete(@host, @cid, %{force: 1})
+    assert code == 204
+  end
+ 
+
   test "/containers/id" do
     {:ok, body, code }  = DockerApi.Container.get(@host, @cid)
     assert is_map(body) 

@@ -15,7 +15,6 @@ defmodule DockerApi.Container do
     handle_response(response)
   end
   
- 
   def top(host, id) do
     response = HTTPoison.get host <> "/containers/#{id}/top"
     handle_response(response)
@@ -28,6 +27,25 @@ defmodule DockerApi.Container do
   
   def start(host, id) do
     response = HTTPoison.post host <> "/containers/#{id}/start", ""
+    handle_response(response)
+  end
+
+  def create(host, opts) do
+    response = HTTPoison.post host <> "/containers/create", Poison.encode!(opts),  %{"Content-type" => "application/json"}
+    handle_response(response)
+  end
+
+  def delete(host, id) do
+    response = HTTPoison.delete host <> "/containers/#{id}"
+    handle_response(response)
+  end
+
+  """
+    v – 1/True/true or 0/False/false, Remove the volumes associated to the container. Default false
+    force - 1/True/true or 0/False/false, Kill then remove the container. Default false
+  """
+  def delete(host, id, opts) do
+    response = HTTPoison.delete host <> "/containers/#{id}?#{query_params(opts)}"
     handle_response(response)
   end
 
@@ -82,6 +100,10 @@ defmodule DockerApi.Container do
     parse_response(resp)
   end
  
+  def handle_response(resp = {:ok, %{status_code: 201, body: body}}) do
+    parse_response(resp)
+  end
+
   def handle_response(resp = {:ok, %{status_code: 204, body: body}}) do
     parse_response(resp)
   end
@@ -91,6 +113,10 @@ defmodule DockerApi.Container do
   end
   
   def handle_response(resp = {:ok, %{status_code: 404 , body: body}}) do 
+    parse_response(resp)
+  end
+
+  def handle_response(resp = {:ok, %{status_code: 500, body: body}}) do 
     parse_response(resp)
   end
 
