@@ -2,7 +2,7 @@ defmodule DockerApiContainerTest do
   use ExUnit.Case
 
   @host "192.168.4.4:14443"
-  @cid "971f52624eb3"
+  @cid "a577228b43cc"
 
   test "/containers" do
     {:ok, body, code }  = DockerApi.Container.all(@host)
@@ -25,7 +25,7 @@ defmodule DockerApiContainerTest do
                                      "6379/tcp": [%{ "HostIp": "192.168.4.4" }]}}
 
     {:ok, body, code } = DockerApi.Container.create(@host, payload)
-    assert code == 204
+    assert code == 201
   end
 
   test "/containers/id delete" do
@@ -52,6 +52,8 @@ defmodule DockerApiContainerTest do
   test "/containers/id/start with port options" do
     payload = %{  "PortBindings": %{ "22/tcp": [%{ "HostIp": "192.168.4.4" }], "6379/tcp": [%{ "HostIp": "192.168.4.4" }]}}
     {:ok, body, code } = DockerApi.Container.start(@host, @cid, payload)
+    IO.inspect body
+    IO.inspect code
   end
 
   test "/containers/id/start with no options" do
@@ -60,6 +62,7 @@ defmodule DockerApiContainerTest do
 
   test "/containers/id/stop" do
     { :ok, body, code } = DockerApi.Container.stop(@host, @cid)
+    assert code == 204
   end
 
 end

@@ -1,42 +1,50 @@
 defmodule DockerApi.Container do
 
+  import DockerApi.HTTP, only: :functions
+  alias DockerApi.HTTP
+
   def all(host) when is_binary(host) do
-    response = HTTPoison.get host <> "/containers/json?all=1" 
+    response = HTTP.get(host <> "/containers/json", %{all: 1})
     handle_response(response)
   end
 
   def all(host, opts) when is_map(opts) do
-    response = HTTPoison.get host <> "/containers/json?#{query_params(opts)}" 
+    response = HTTP.get(host <> "/containers/json", opts) 
     handle_response(response)
   end
 
   def get(host, id) do
-    response =HTTPoison.get host <> "/containers/#{id}/json"
+    response =HTTP.get(host <> "/containers/#{id}/json")
     handle_response(response)
   end
   
   def top(host, id) do
-    response = HTTPoison.get host <> "/containers/#{id}/top"
+    response = HTTP.get(host <> "/containers/#{id}/top")
     handle_response(response)
   end
   
   def changes(host, id) do
-    response = HTTPoison.get host <> "/containers/#{id}/changes"
+    response = HTTP.get(host <> "/containers/#{id}/changes")
     handle_response(response)
   end
   
   def start(host, id) do
-    response = HTTPoison.post host <> "/containers/#{id}/start", ""
+    response = HTTP.post(host <> "/containers/#{id}/start")
+    handle_response(response)
+  end
+
+  def start(host, id, opts) do
+    response = HTTP.post(host <> "/containers/#{id}/start", opts)
     handle_response(response)
   end
 
   def create(host, opts) do
-    response = HTTPoison.post host <> "/containers/create", Poison.encode!(opts),  %{"Content-type" => "application/json"}
+    response = HTTP.post(host <> "/containers/create", opts)
     handle_response(response)
   end
 
   def delete(host, id) do
-    response = HTTPoison.delete host <> "/containers/#{id}"
+    response = HTTP.delete(host <> "/containers/#{id}")
     handle_response(response)
   end
 
@@ -45,27 +53,23 @@ defmodule DockerApi.Container do
     force - 1/True/true or 0/False/false, Kill then remove the container. Default false
   """
   def delete(host, id, opts) do
-    response = HTTPoison.delete host <> "/containers/#{id}?#{query_params(opts)}"
+    response = HTTP.delete(host <> "/containers/#{id}", opts)
     handle_response(response)
   end
 
-  def start(host, id, opts) do
-    response = HTTPoison.post host <> "/containers/#{id}/start", Poison.encode!(opts),  %{"Content-type" => "application/json"}
-    handle_response(response)
-  end
 
   def stop(host, id) do
-    response = HTTPoison.post host <> "/containers/#{id}/stop", ""
+    response = HTTP.post(host <> "/containers/#{id}/stop")
     handle_response(response)
   end
 
   def restart(host, id) do
-    response = HTTPoison.post host <> "/containers/#{id}/restart"
+    response = HTTP.post(host <> "/containers/#{id}/restart")
     handle_response(response)
   end
 
   def kill(host, id) do
-    response = HTTPoison.post host <> "/containers/#{id}/kill"
+    response = HTTP.post(host <> "/containers/#{id}/kill")
     handle_response(response)
   end
 
@@ -92,61 +96,8 @@ defmodule DockerApi.Container do
   
   # WIP dont use
   def attach(host, id) do
-    response = HTTPoison.post host <> "/containers/#{id}/attach?logs=1&stream=1&stdout=1&stdin=1"
+    response = HTTP.post host <> "/containers/#{id}/attach?logs=1&stream=1&stdout=1&stdin=1"
     response
   end
 
-  def handle_response(resp = {:ok, %{status_code: 200, body: body}}) do
-    parse_response(resp)
-  end
- 
-  def handle_response(resp = {:ok, %{status_code: 201, body: body}}) do
-    parse_response(resp)
-  end
-
-  def handle_response(resp = {:ok, %{status_code: 204, body: body}}) do
-    parse_response(resp)
-  end
- 
-  def handle_response(resp = {:ok, %{status_code: 304, body: body}}) do
-    parse_response(resp)
-  end
-  
-  def handle_response(resp = {:ok, %{status_code: 404 , body: body}}) do 
-    parse_response(resp)
-  end
-
-  def handle_response(resp = {:ok, %{status_code: 500, body: body}}) do 
-    parse_response(resp)
-  end
-
-  def handle_response(resp = {:error, %HTTPoison.Error{id: _, reason: reason}}) do
-    parse_response(resp)
-  end
-
-  def parse_response({:error, resp = %HTTPoison.Error{id: _, reason: reason}}) do
-    { :error, reason, 500 }
-  end
-  
-  def parse_response({:ok, resp=%HTTPoison.Response{body: "", headers: headers, status_code: code}}) do
-    {:ok, resp.body, code }
-  end
-
-  def parse_response({:ok, resp=%HTTPoison.Response{body: body, headers: %{"Content-Length" =>  _, "Content-Type" => "text/plain; charset=utf-8", "Date" => _}, status_code: code}}) do
-    {:ok, body, code }
-  end
-
-  def parse_response(response) do
-    {result, response } = response 
-    {result, Poison.decode!(response.body), response.status_code }
-  end
-
-  def query_params(args)  do
-   Enum.map(Map.to_list(args), fn {k,v} -> encode_attribute(k, v) end)
-   |> Enum.join("&") 
-  end
-  
-  def encode_attribute(k, v), do: "#{k}=#{encode_value(v)}"
-
-  def encode_value(v), do: URI.encode_www_form("#{v}")
 end
