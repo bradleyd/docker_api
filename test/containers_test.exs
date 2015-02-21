@@ -35,7 +35,8 @@ defmodule DockerApiContainerTest do
  
 
   test "/containers/id" do
-    {:ok, body, code }  = DockerApi.Container.get(@host, @cid)
+    {:ok, body, code }  = DockerApi.Container.find(@host, @cid)
+    IO.inspect body
     assert is_map(body) 
   end
  

@@ -2,11 +2,28 @@ defmodule DockerApi.Image do
   import DockerApi.HTTP, only: :functions
   alias DockerApi.HTTP
 
+  @docmodule """
+    Docker Image API
+  """
+
+  @doc """
+  Get all the images from a docker host
+    
+     iex> DockerApi.all("127.0.0.1")
+       []
+  """
   def all(host) when is_binary(host) do
     response = HTTP.get(host <> "/images/json", %{all: 1})
     handle_response(response)
   end
 
+  @doc """
+  Find a specific image by id or name
+
+    iex> DockerApi.find("127.0.0.1", "foo")
+      []
+
+  """
   def find(host, id) when is_binary(host) do
     response = HTTP.get(host <> "/images/#{id}/json")
     handle_response(response)
@@ -22,6 +39,15 @@ defmodule DockerApi.Image do
     handle_response(response)
   end
 
+  @doc """
+  Create an image 
+  
+  host: docker host
+  opts: query parameters 
+
+  * please see docker api docs for full list of query parameters
+
+  """
   def create(host, opts) when is_binary(host) and is_map(opts) do
     url = "#{host}/images/create?#{encode_query_params(opts)}"
     {:ok, %HTTPoison.AsyncResponse{id: id}} = HTTPoison.post(url, "", %{"content-type" => "application/json"}, stream_to: self)

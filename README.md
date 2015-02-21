@@ -8,6 +8,31 @@ A Docker Api client for Elixir
 
 * currently only supports TCP
 
+#### Usage
+
+Add `docker_api` to your `mix.exs`
+
+```elixir
+  defp deps do
+    [
+      {:docker_api, git: "https://github.com/bradleyd/docker_api.git"}
+    ]   
+  end
+```
+
+Make sure it gets started
+
+```elixir
+  def application do
+    [applications: [:logger, :docker_api]]
+```
+
+You can start it by hand also
+
+```elixir
+DockerApi.start #=> {:ok, []}
+```
+
 #### Container
 
 `all\1`
@@ -54,3 +79,10 @@ A Docker Api client for Elixir
 ```elixir
 {:ok, result } = DockerApi.Image.build(@host, %{t: "foo", q: 1}, "/tmp/docker_image.tar.gz")
 ```
+
+
+### TODO
+
+- [ ] Finish mapping all the API endpoints
+- [ ] Finish docstrings 
+- [ ] Mock all the HTTP calls

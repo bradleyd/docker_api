@@ -13,7 +13,7 @@ defmodule DockerApi.Container do
     handle_response(response)
   end
 
-  def get(host, id) do
+  def find(host, id) do
     response =HTTP.get(host <> "/containers/#{id}/json")
     handle_response(response)
   end
