@@ -1,5 +1,6 @@
 defmodule DockerApiImageTest do
   use ExUnit.Case
+  import PathHelpers
 
   @host "192.168.4.4:14443"
   @iid "5506de2b643b"
@@ -19,4 +20,20 @@ defmodule DockerApiImageTest do
     { :ok, body, code } = DockerApi.Image.history(@host, @iid)
     assert is_integer(code)
   end
+
+  test "/images/foo delete" do
+    { :ok, body, code } = DockerApi.Image.delete(@host, "foo", %{force: 1})
+    assert is_integer(code)
+  end
+
+  test "/build" do
+    {:ok, result } = DockerApi.Image.build(@host, %{t: "foo", q: 1}, fixture_path("docker_image.tar.gz"))
+    assert is_list(result)
+  end
+
+  #test "/images/create" do
+    #{ :ok, body, code } = DockerApi.Image.create(@host, %{"fromImage" => "bradleyd/ubuntu-sensu-base", "tag" => "testeroo"})
+    #assert is_integer(code)
+  #end
+
 end
