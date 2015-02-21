@@ -1,22 +1,56 @@
 DockerApi
 =========
 
-A simple Docker Api client for Elixir
+A Docker Api client for Elixir
 
-#### Config
-Hosts are a list 
+[Docker API Version](https://docs.docker.com/v1.4/reference/api/docker_remote_api_v1.16/)
 
+
+* currently only supports TCP
 
 #### Container
 
-`#all`
+`all\1`
 
 ```elixir
-DockerApi.all
+{:ok, body, code } = DockerApi.all("127.0.0.1")
 ```
 
-`get\1`
+`get\2`
 
 ```elixir
-DockerApi.Container.get("12345")
+{:ok, body, code } = DockerApi.Container.get("127.0.0.1", "12345")
+```
+
+`top\2`
+
+ ```elixir
+{:ok, body, code } = DockerApi.Container.top("127.0.0.1", "12345")
+```
+
+`create\2`
+
+ ```elixir
+{:ok, body, code } = DockerApi.Container.create("127.0.0.1", %{image: "foo"})
+```
+
+
+#### Images
+
+`all\1`
+
+```elixir
+{:ok, body, code } = DockerApi.Image.all("127.0.0.1")
+```
+
+`find\1`
+
+```elixir
+{ :ok, body, code } = DockerApi.Image.find("127.0.0.1", "12345")
+```
+
+`build\3`
+
+```elixir
+{:ok, result } = DockerApi.Image.build(@host, %{t: "foo", q: 1}, "/tmp/docker_image.tar.gz")
 ```
