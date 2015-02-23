@@ -46,43 +46,43 @@ defmodule DockerApi.HTTP do
     HTTPoison.delete(url)
   end
 
-  def handle_response(resp = {:ok, %{status_code: 200, body: body}}) do
+  def handle_response(resp = {:ok, %{status_code: 200, body: _body}}) do
     parse_response(resp)
   end
  
-  def handle_response(resp = {:ok, %{status_code: 201, body: body}}) do
+  def handle_response(resp = {:ok, %{status_code: 201, body: _body}}) do
     parse_response(resp)
   end
 
-  def handle_response(resp = {:ok, %{status_code: 204, body: body}}) do
+  def handle_response(resp = {:ok, %{status_code: 204, body: _body}}) do
     parse_response(resp)
   end
  
-  def handle_response(resp = {:ok, %{status_code: 304, body: body}}) do
+  def handle_response(resp = {:ok, %{status_code: 304, body: _body}}) do
     parse_response(resp)
   end
   
-  def handle_response(resp = {:ok, %{status_code: 404 , body: body}}) do 
+  def handle_response(resp = {:ok, %{status_code: 404 , body: _body}}) do 
     parse_response(resp)
   end
 
-  def handle_response(resp = {:ok, %{status_code: 500, body: body}}) do 
+  def handle_response(resp = {:ok, %{status_code: 500, body: _body}}) do 
     parse_response(resp)
   end
 
-  def handle_response(resp = {:error, %HTTPoison.Error{id: _, reason: reason}}) do
+  def handle_response(resp = {:error, %HTTPoison.Error{id: _, reason: _reason}}) do
     parse_response(resp)
   end
 
-  def parse_response({:error, resp = %HTTPoison.Error{id: _, reason: reason}}) do
+  def parse_response({:error, %HTTPoison.Error{id: _, reason: reason}}) do
     { :error, reason, 500 }
   end
   
-  def parse_response({:ok, resp=%HTTPoison.Response{body: "", headers: headers, status_code: code}}) do
+  def parse_response({:ok, resp = %HTTPoison.Response{body: "", headers: _headers, status_code: code}}) do
     {:ok, resp.body, code }
   end
 
-  def parse_response({:ok, resp=%HTTPoison.Response{body: body, headers: %{"Content-Length" =>  _, "Content-Type" => "text/plain; charset=utf-8", "Date" => _}, status_code: code}}) do
+  def parse_response({:ok, %HTTPoison.Response{body: body, headers: %{"Content-Length" =>  _, "Content-Type" => "text/plain; charset=utf-8", "Date" => _}, status_code: code}}) do
     {:ok, body, code }
   end
 

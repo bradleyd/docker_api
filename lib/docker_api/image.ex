@@ -86,13 +86,11 @@ defmodule DockerApi.Image do
       %HTTPoison.AsyncHeaders{headers: _, id: id} -> stream_loop(id, agent)
       %HTTPoison.AsyncChunk{id: id, chunk: chk} -> 
         if String.valid?(chk) do
-          #IO.inspect Poison.decode!(chk)
-          Agent.update(agent, fn set -> [Poison.decode!(chk)|set] end)
+          Agent.update(agent, fn l -> [Poison.decode!(chk)|l] end)
         end
         stream_loop(id, agent)
       %HTTPoison.AsyncEnd{id: id} -> 
-        #IO.puts "End of stream"
-        Agent.get(agent, fn set -> set end)
+        Agent.get(agent, fn l -> l end)
     after
       5_000 -> "Timeout waiting for stream"
     end
