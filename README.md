@@ -41,10 +41,17 @@ DockerApi.start #=> {:ok, []}
 {:ok, body, code } = DockerApi.all("127.0.0.1")
 ```
 
-`get\2`
+`find\2`
 
 ```elixir
 {:ok, body, code } = DockerApi.Container.get("127.0.0.1", "12345")
+```
+__find\2__
+
+Find can also take a List of hosts to recurse through.
+
+```elixir
+{:ok, body, code } = DockerApi.Container.get(["127.0.0.1", "10.100.13.21"], "12345")
 ```
 
 `top\2`
@@ -68,7 +75,7 @@ DockerApi.start #=> {:ok, []}
 {:ok, body, code } = DockerApi.Image.all("127.0.0.1")
 ```
 
-`find\1`
+`find\2`
 
 ```elixir
 { :ok, body, code } = DockerApi.Image.find("127.0.0.1", "12345")
@@ -84,5 +91,6 @@ DockerApi.start #=> {:ok, []}
 ### TODO
 
 - [ ] Finish mapping all the API endpoints
+- [ ] Talk to docker hosts that use credentails
 - [ ] Finish docstrings 
 - [ ] Mock all the HTTP calls
