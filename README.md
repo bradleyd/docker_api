@@ -25,6 +25,7 @@ Make sure it gets started
 ```elixir
   def application do
     [applications: [:logger, :docker_api]]
+  end
 ```
 
 You can start it by hand also
@@ -35,13 +36,13 @@ DockerApi.start #=> {:ok, []}
 
 #### Container
 
-`all\1`
+__all\1__
 
 ```elixir
 {:ok, body, code } = DockerApi.all("127.0.0.1")
 ```
 
-`find\2`
+__find\2__
 
 ```elixir
 {:ok, body, code } = DockerApi.Container.get("127.0.0.1", "12345")
@@ -54,13 +55,13 @@ Find can also take a List of hosts to recurse through.
 {:ok, body, code } = DockerApi.Container.get(["127.0.0.1", "10.100.13.21"], "12345")
 ```
 
-`top\2`
+__top\2__
 
  ```elixir
 {:ok, body, code } = DockerApi.Container.top("127.0.0.1", "12345")
 ```
 
-`create\2`
+__create\2__
 
  ```elixir
 {:ok, body, code } = DockerApi.Container.create("127.0.0.1", %{image: "foo"})
@@ -69,13 +70,13 @@ Find can also take a List of hosts to recurse through.
 
 #### Images
 
-`all\1`
+__all\1__
 
 ```elixir
 {:ok, body, code } = DockerApi.Image.all("127.0.0.1")
 ```
 
-`find\2`
+__find\2__
 
 ```elixir
 { :ok, body, code } = DockerApi.Image.find("127.0.0.1", "12345")

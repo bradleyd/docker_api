@@ -3,19 +3,32 @@ defmodule DockerApi.Mixfile do
 
   def project do
     [app: :docker_api,
-     version: "0.2.0",
-     elixir: "~> 1.0",
-     deps: deps]
+      version: "0.3.0",
+      elixir: "~> 1.0",
+      description: description,
+      package: package,
+      deps: deps]
   end
 
-  # Configuration for the OTP application
-  #
-  # Type `mix help compile.app` for more information
   def application do
     [applications: [:logger, :httpoison]]
   end
 
-   defp deps do
+  def description do
+    "Docker API for Elixir" 
+  end
+
+  def package do
+    [
+      contributors: ["Bradley Smith"],
+      licenses: ["The MIT License"],
+      links: %{
+        "GitHub" => "https://github.com/bradleyd/docker_api"
+      }
+    ]
+  end
+
+  defp deps do
     [
       {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.1"},
       {:httpoison, "~> 0.6"},
