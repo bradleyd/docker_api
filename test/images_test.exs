@@ -3,7 +3,7 @@ defmodule DockerApiImageTest do
   import PathHelpers
 
   @host "192.168.4.4:14443"
-  @iid "5506de2b643b"
+  @iid "868be653dea3"
 
   test "/images" do
     {:ok, body, code } = DockerApi.Image.all(@host)
@@ -13,6 +13,7 @@ defmodule DockerApiImageTest do
 
   test "/images/id" do
     { :ok, body, code } = DockerApi.Image.find(@host, @iid)
+    IO.inspect body
     assert is_integer(code)
   end
  

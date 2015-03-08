@@ -18,15 +18,38 @@ defmodule DockerApi.Image do
   end
 
   @doc """
-  Find a specific image by id or name
+  Find a image when hosts is a String
 
-    iex> DockerApi.find("127.0.0.1", "foo")
-      []
+  hosts: "127.0.0.1"
+  id: "1234567" 
 
+      iex> DockerApi.Image.find("127.0.0.1", "123456")
+        %{...}
   """
   def find(host, id) when is_binary(host) do
     response = HTTP.get(host <> "/images/#{id}/json")
     handle_response(response)
+  end
+
+  @doc """
+  Find a image when hosts is a List
+
+  hosts: ["127.0.0.1", 10.10.100.31"]
+  id: "1234567" 
+
+      iex> DockerApi.Image.find(["127.0.0.1", 10.10.100.31"], "123456")
+        %{...}
+  """
+  def find(hosts, id) when is_list(hosts), do: _find(hosts, id, %{})
+  
+  defp _find([], _id, result), do: result
+  defp _find([head | tail], id, _result) do
+    case find(head, id) do
+      {:ok, body, 200} when is_map(body) ->
+        _find([], id, {:ok, body, 200})
+      {result, body, code} -> 
+        _find(tail, id, {result, body, code})
+    end
   end
 
   def history(host, id) when is_binary(host) do

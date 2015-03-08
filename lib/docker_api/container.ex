@@ -8,7 +8,7 @@ defmodule DockerApi.Container do
 
   host: "127.0.0.1"
     
-     iex> DockerApi.Container.find("127.0.0.1")
+     iex> DockerApi.Container.all("127.0.0.1")
         [%{...}, ..]
   """
   def all(host) when is_binary(host) do
@@ -130,6 +130,16 @@ defmodule DockerApi.Container do
     handle_response(response)
   end
 
+  def exec(host, id, opts) do
+    response = HTTP.post(host <> "/containers/#{id}/exec", opts)
+    handle_response(response)
+  end
+  
+  def exec_start(host, id, opts) do
+    {:ok, %HTTPoison.AsyncResponse{id: id}} = HTTPoison.post host <> "/exec/#{id}/start?stream=0", Poison.encode!(opts), %{"content-type" => "application/json"}, stream_to: self
+    {:ok, stream_loop([]) |> Enum.reverse }
+  end
+  
   @doc """
 
   Fetch the logs from a container
@@ -154,8 +164,12 @@ defmodule DockerApi.Container do
         end
       %HTTPoison.AsyncEnd{id: id} ->
         stream_loop(acc, :done)
+      %HTTPoison.Error{id: id, reason: {:closed, extra}} ->
+        acc
     after
-      5_000 -> "Timeout waiting for stream"
+      5_000 -> 
+        IO.puts "Timeout waiting for stream"
+        acc
     end
   end
 

@@ -32,6 +32,7 @@ defmodule DockerApi.Mixfile do
     [
       {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.1"},
       {:httpoison, "~> 0.6"},
+      {:mock, "~> 0.1", only: :test},
       {:poison, "~> 1.3"}
     ]
   end

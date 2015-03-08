@@ -49,7 +49,7 @@ __find\2__
 ```
 __find\2__
 
-Find can also take a List of hosts to recurse through.
+Find can also take a List of hosts to search through.
 
 ```elixir
 {:ok, body, code } = DockerApi.Container.get(["127.0.0.1", "10.100.13.21"], "12345")
@@ -67,6 +67,33 @@ __create\2__
 {:ok, body, code } = DockerApi.Container.create("127.0.0.1", %{image: "foo"})
 ```
 
+__logs__\2
+
+ ```elixir
+{:ok, body, code } = DockerApi.Container.logs("127.0.0.1", "12345")
+```
+
+To run a command on a container, you must create a Exec first.
+exec returns a `Id` to query with
+
+__exec__\3
+
+```elixir
+payload = %{ "AttachStdin": false, "AttachStdout": true, "AttachStderr": true, "Tty": false, "Cmd": ["date"] }
+{:ok, body, code }  = DockerApi.Container.exec("127.0.0.1", "12345", payload)
+#=> %{ "Id" => "1234556678890" }
+```
+
+With our `Id` in hand we can then get the results of the Exec
+
+__exec_start__\3
+
+```elixir
+payload = %{"Detach": false, "Tty": true}
+{:ok, body }  = DockerApi.Container.exec_start("127.0.0.1", "1234556678890", payload)
+
+#=> ["Sun Mar  8 00:25:18 UTC 2015\n"]
+```
 
 #### Images
 
@@ -82,16 +109,24 @@ __find\2__
 { :ok, body, code } = DockerApi.Image.find("127.0.0.1", "12345")
 ```
 
-`build\3`
+Find also takes a List of hosts. Find will search all hosts in the list for a match with that `id`
 
 ```elixir
-{:ok, result } = DockerApi.Image.build(@host, %{t: "foo", q: 1}, "/tmp/docker_image.tar.gz")
+{ :ok, body, code } = DockerApi.Image.find(["127.0.0.1", "10.10.100.12"], "12345")
+```
+
+
+__build\3__
+
+```elixir
+{:ok, result } = DockerApi.Image.build("127.0.0.1", %{t: "foo", q: 1}, "/tmp/docker_image.tar.gz")
 ```
 
 
 ### TODO
 
 - [ ] Finish mapping all the API endpoints
-- [ ] Talk to docker hosts that use credentails
+- [ ] Events do not stream forever; only show because of IO.inspect
+- [ ] Talk to docker hosts that use credentails/TLS
 - [ ] Finish docstrings 
 - [ ] Mock all the HTTP calls

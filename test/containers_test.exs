@@ -2,7 +2,7 @@ defmodule DockerApiContainerTest do
   use ExUnit.Case
 
   @host "192.168.4.4:14443"
-  @cid "a577228b43cc"
+  @cid "86fda78c440e"
 
   test "/containers" do
     {:ok, body, code }  = DockerApi.Container.all(@host)
@@ -33,6 +33,17 @@ defmodule DockerApiContainerTest do
     assert code == 204
   end
  
+  test "/containers/id/exec" do
+    payload = %{ "AttachStdin": false, "AttachStdout": true, "AttachStderr": true, "Tty": false, "Cmd": [ "date"] }
+    {:ok, body, code }  = DockerApi.Container.exec(@host, @cid, payload)
+    assert code == 201
+  end
+ 
+  test "/exec/id/start" do
+    payload = %{"Detach": false, "Tty": true}
+    {:ok, body }  = DockerApi.Container.exec_start(@host, "02ffad5e4dd87fdb15cc70720b496748c1fa80fb9d2840e8a173338e0e18f434", payload)
+    IO.inspect body
+  end
 
   test "/containers/id" do
     {:ok, body, code }  = DockerApi.Container.find(@host, @cid)
@@ -42,6 +53,7 @@ defmodule DockerApiContainerTest do
  
   test "/containers/id/top" do
     { :ok, body, code } = DockerApi.Container.top(@host, @cid)
+    IO.inspect body
     assert is_map(body) 
   end
 
