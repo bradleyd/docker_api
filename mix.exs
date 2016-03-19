@@ -30,7 +30,7 @@ defmodule DockerApi.Mixfile do
 
   defp deps do
     [
-      {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.1"},
+      {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.2.2"},
       {:httpoison, "~> 0.6"},
       {:mock, "~> 0.1", only: :test},
       {:poison, "~> 1.3"}
