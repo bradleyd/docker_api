@@ -22,5 +22,5 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env}.exs"
-config :docker_api, :hosts,
-  ["docker0001.wameku.com:14443", "192.168.4.4:14443"]
+
+import_config "#{Mix.env}.exs"
