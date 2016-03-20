@@ -1,7 +1,7 @@
 defmodule DockerApiContainerTest do
   use ExUnit.Case
 
-  @host "192.168.4.4:14443"
+  @host Application.get_env(:docker_api, :host)
   @cid "86fda78c440e"
 
   test "/containers" do

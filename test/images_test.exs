@@ -2,7 +2,7 @@ defmodule DockerApiImageTest do
   use ExUnit.Case
   import PathHelpers
 
-  @host "192.168.4.4:14443"
+  @host Application.get_env(:docker_api, :host)
   @iid "868be653dea3"
 
   test "/images" do
