@@ -23,4 +23,7 @@ use Mix.Config
 #
 #     import_config "#{Mix.env}.exs"
 
+config :hackney, :max_connections, 10
+config :hackney, :timeout, 5_000
+
 import_config "#{Mix.env}.exs"
