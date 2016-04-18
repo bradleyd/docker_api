@@ -1,7 +1,7 @@
 defmodule DockerApiContainerTest do
   use ExUnit.Case
 
-  @host Application.get_env(:docker_api, :host)
+  @host "#{Application.get_env(:docker_api, :host)}:#{Application.get_env(:docker_api, :port)}"
   @cid "86fda78c440e"
 
   test "/containers" do

@@ -1,7 +1,7 @@
 defmodule DockerApiHTTPTest do
   use ExUnit.Case
 
-  @host Application.get_env(:docker_api, :host)
+  @host "#{Application.get_env(:docker_api, :host)}:#{Application.get_env(:docker_api, :port)}"
   @cid "971f52624eb3"
 
   test "get" do
