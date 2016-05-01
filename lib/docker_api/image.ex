@@ -109,14 +109,25 @@ defmodule DockerApi.Image do
       %HTTPoison.AsyncHeaders{headers: _, id: id} -> stream_loop(id, agent)
       %HTTPoison.AsyncChunk{id: id, chunk: chk} -> 
         if String.valid?(chk) do
-          Agent.update(agent, fn l -> [Poison.decode!(chk)|l] end)
+          #Agent.update(agent, fn l -> [Poison.decode!(chk)|l] end)
+          Agent.update(agent, fn l -> [decode(chk)|l] end)
         end
         stream_loop(id, agent)
       %HTTPoison.AsyncEnd{id: id} -> 
         Agent.get(agent, fn l -> l end)
     after
-      5_000 -> "Timeout waiting for stream"
+      15_000 -> "Timeout waiting for stream"
     end
   end
 
+  defp decode(chunk) do
+    case Poison.decode(chunk) do
+      {:ok, decoded} ->
+        decoded
+      {:error, oops} ->
+        IO.puts("There was a problem decoding #{chunk}")
+      _ ->
+        IO.puts("Unknown error in parsing json from docker api")
+    end
+  end
 end

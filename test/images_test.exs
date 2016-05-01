@@ -16,7 +16,7 @@ defmodule DockerApiImageTest do
     IO.inspect body
     assert is_integer(code)
   end
- 
+
   test "/images/id/history" do
     { :ok, body, code } = DockerApi.Image.history(@host, @iid)
     assert is_integer(code)
@@ -32,9 +32,9 @@ defmodule DockerApiImageTest do
     assert is_list(result)
   end
 
-  #test "/images/create" do
-    #{ :ok, body, code } = DockerApi.Image.create(@host, %{"fromImage" => "bradleyd/ubuntu-sensu-base", "tag" => "testeroo"})
-    #assert is_integer(code)
-  #end
+  test "/images/create" do
+    #{ :ok, body } = DockerApi.Image.create(@host, %{"fromImage" => "127.0.0.1:5000/redis:latest"})
+    #IO.inspect body
+  end
 
 end
