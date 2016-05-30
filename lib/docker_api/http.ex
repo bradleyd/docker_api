@@ -82,13 +82,14 @@ defmodule DockerApi.HTTP do
     {:ok, resp.body, code }
   end
 
-  def parse_response({:ok, %HTTPoison.Response{body: body, headers: %{"Content-Length" =>  _, "Content-Type" => "text/plain; charset=utf-8", "Date" => _}, status_code: code}}) do
-    {:ok, body, code }
-  end
-
-  def parse_response(response) do
-    {result, response } = response 
-    {result, Poison.decode!(response.body), response.status_code }
+  def parse_response({:ok, %HTTPoison.Response{body: body, headers: headers, status_code: code}}) do
+    {"Content-Type", type} = List.keyfind(headers, "Content-Type", 0)
+    case type do
+      "text/plain; charset=utf-8" ->
+        {:ok, body, code }
+      "application/json" ->
+        {:ok, Poison.decode!(body), code }
+    end
   end
 
   def query_params(args)  do
