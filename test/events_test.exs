@@ -3,7 +3,7 @@ defmodule DockerApiEventsTest do
 
   import Mock
 
-  @host "192.168.4.4:14443"
+  @host "#{Application.get_env(:docker_api, :host)}:#{Application.get_env(:docker_api, :port)}"
 
   test "/events" do
     with_mock DockerApi.Events, [all: fn(_host) -> {:ok, []} end] do
