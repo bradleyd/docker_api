@@ -152,16 +152,20 @@ defmodule DockerApi.Container do
     {:ok, stream_loop([]) |> Enum.reverse }
   end
 
+  # TODO needs to be parsed correctly according to docker api
   defp stream_loop(acc, :done), do: acc
   defp stream_loop(acc) do
     receive do
       %HTTPoison.AsyncStatus{ id: id, code: 200 } -> stream_loop(acc)
       %HTTPoison.AsyncHeaders{headers: _, id: id} -> stream_loop(acc)
       %HTTPoison.AsyncChunk{id: id, chunk: chk} -> 
-        case String.printable?(chk) do
-          true -> stream_loop([chk|acc])
-          _    -> stream_loop(acc) #<<stream_type::8, 0, 0, 0, size1::8, size2::8, size3::8, size4::8, rest::binary >> = chk
-        end
+      <<stream_type::8, 0, 0, 0,0,0,idk::8,rest::binary >> = chk
+      #  stream_loop([to_string(rest)|acc])
+      case String.printable?(rest) do
+            true -> 
+            stream_loop([rest|acc])
+            _    -> stream_loop(acc) #<<stream_type::8, 0, 0, 0, size1::8, size2::8, size3::8, size4::8, rest::binary >> = chk
+          end
       %HTTPoison.AsyncEnd{id: id} ->
         stream_loop(acc, :done)
       %HTTPoison.Error{id: id, reason: {:closed, extra}} ->
