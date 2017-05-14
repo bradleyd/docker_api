@@ -3,11 +3,11 @@ defmodule DockerApi.Mixfile do
 
   def project do
     [app: :docker_api,
-      version: "0.3.0",
+      version: "0.4.0",
       elixir: "~> 1.0",
-      description: description,
-      package: package,
-      deps: deps]
+      description: description(),
+      package: package(),
+      deps: deps()]
   end
 
   def application do
@@ -15,7 +15,7 @@ defmodule DockerApi.Mixfile do
   end
 
   def description do
-    "Docker API for Elixir" 
+    "Docker API for Elixir"
   end
 
   def package do
@@ -31,9 +31,9 @@ defmodule DockerApi.Mixfile do
   defp deps do
     [
       {:ibrowse, "~> 4.2"},
-      {:httpoison, "~> 0.6"},
+      {:httpoison, "~> 0.11.0"},
       {:mock, "~> 0.1", only: :test},
-      {:poison, "~> 1.3"}
+      {:poison, "~> 2.2.0"}
     ]
   end
 end

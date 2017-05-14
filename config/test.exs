@@ -1,3 +1,2 @@
 use Mix.Config
-config :docker_api, :host, System.get_env("DOCKER_API_HOST") || "127.0.0.1"
-config :docker_api, :port, System.get_env("DOCKER_API_PORT") || "2376"
+config :docker_api, :uri, System.get_env("DOCKER_API_URL") || "http+unix://%2fvar%2frun%2fdocker.sock"

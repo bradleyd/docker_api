@@ -3,11 +3,11 @@ defmodule DockerApiEventsTest do
 
   import Mock
 
-  @host "#{Application.get_env(:docker_api, :host)}:#{Application.get_env(:docker_api, :port)}"
+  @host "#{Application.get_env(:docker_api, :uri)}"
 
   test "/events" do
     with_mock DockerApi.Events, [all: fn(_host) -> {:ok, []} end] do
-      {:ok, body }  = DockerApi.Events.all(@host)
+      {:ok, _body }  = DockerApi.Events.all(@host)
       assert called DockerApi.Events.all(@host)
     end
   end

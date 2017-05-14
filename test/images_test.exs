@@ -2,39 +2,50 @@ defmodule DockerApiImageTest do
   use ExUnit.Case
   import PathHelpers
 
-  @host "#{Application.get_env(:docker_api, :host)}:#{Application.get_env(:docker_api, :port)}"
-  @iid "868be653dea3"
+  @host "#{Application.get_env(:docker_api, :uri)}"
+
+  defp parse_create_image_response(response) do
+    %{"stream" => st} = List.first(response)
+    case st do
+      "sha256:" <> iid -> iid
+      "Successfully built " <> iid -> iid
+    end
+    |> String.trim
+  end
+
+  defp create_image do
+    {:ok, response} = DockerApi.Image.build(@host, %{t: "foo", q: 1}, fixture_path("docker_image.tar.gz"))
+    {:ok, [iid: parse_create_image_response(response)]}
+  end
+
+  setup do
+    create_image()
+  end
 
   test "/images" do
     {:ok, body, code } = DockerApi.Image.all(@host)
     assert is_list(body)
-    assert is_integer(code)
+    assert code == 200
   end
 
-  test "/images/id" do
-    { :ok, body, code } = DockerApi.Image.find(@host, @iid)
-    IO.inspect body
-    assert is_integer(code)
-  end
- 
-  test "/images/id/history" do
-    { :ok, body, code } = DockerApi.Image.history(@host, @iid)
-    assert is_integer(code)
+  test "/images/id", context do
+    { :ok, _body, code } = DockerApi.Image.find(@host, context[:iid])
+    assert code == 200
   end
 
-  test "/images/foo delete" do
-    { :ok, body, code } = DockerApi.Image.delete(@host, "foo", %{force: 1})
-    assert is_integer(code)
+  test "/images/id/history", context do
+    { :ok, _body, code } = DockerApi.Image.history(@host, context[:iid])
+    assert code == 200
   end
 
-  test "/build" do
-    {:ok, result } = DockerApi.Image.build(@host, %{t: "foo", q: 1}, fixture_path("docker_image.tar.gz"))
-    assert is_list(result)
+  test "/images/foo delete", context do
+    { :ok, _body, code } = DockerApi.Image.delete(@host, context[:iid], %{force: 1})
+    assert code == 200
   end
 
-  #test "/images/create" do
-    #{ :ok, body, code } = DockerApi.Image.create(@host, %{"fromImage" => "bradleyd/ubuntu-sensu-base", "tag" => "testeroo"})
-    #assert is_integer(code)
-  #end
+  test "/images/create" do
+    { :ok, body } = DockerApi.Image.create(@host, %{"fromImage" => "redis", "tag" => "alpine"})
+    assert is_list(body)
+  end
 
 end
