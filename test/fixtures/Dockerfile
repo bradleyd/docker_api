@@ -1,4 +1,4 @@
-FROM bradleyd/ubuntu-sensu-base
+FROM alpine
 
 MAINTAINER Bradley Smith
 

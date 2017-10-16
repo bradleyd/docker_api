@@ -1,0 +1,21 @@
+sudo: required
+dist: trusty
+language: elixir
+elixir:
+  - 1.4.2
+otp_release:
+  - 19.3
+env:
+  - DOCKER_VERSION=17.05.0~ce-0~ubuntu-trusty
+  - DOCKER_VERSION=1.13.1-0~ubuntu-trusty
+  - DOCKER_VERSION=1.12.3-0~trusty
+  - DOCKER_VERSION=1.11.1-0~trusty
+  - DOCKER_VERSION=1.10.3-0~trusty
+  - DOCKER_VERSION=1.9.1-0~trusty
+before_install:
+ - docker --version
+before_script:
+ - sudo ./test/fixtures/script/install_docker.sh ${DOCKER_VERSION} ${DOCKER_PACKAGE}
+ - uname -a
+ - docker --version
+ - docker info
