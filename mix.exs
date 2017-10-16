@@ -3,7 +3,7 @@ defmodule DockerApi.Mixfile do
 
   def project do
     [app: :docker_api,
-      version: "0.4.0",
+      version: "0.5.0",
       elixir: "~> 1.0",
       description: description(),
       package: package(),
